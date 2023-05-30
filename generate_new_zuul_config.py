@@ -86,7 +86,11 @@ def create_new_zuul_config(zuul_config, common_package_set):
     new_zuul_pkgs = []
     common_package_list = sorted(common_package_set)
     for pkg in common_package_list:
-        new_zuul_pkgs.append({pkg: {'zuul/include': [], 'default-branch': 'main'}})
+        # hack: systemd is not a dictionary, hence different handling
+        if pkg == 'rpms/systemd':
+            new_zuul_pkgs.append(pkg)
+        else:
+            new_zuul_pkgs.append({pkg: {'zuul/include': [], 'default-branch': 'main'}})
 
     zuul_config['resources']['projects']['Fedora-Distgits']['source-repositories'] = new_zuul_pkgs
 
