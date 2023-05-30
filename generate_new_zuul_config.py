@@ -6,6 +6,27 @@ import requests
 import yaml
 
 
+class CustomDumper(yaml.Dumper):
+    """Dump the yaml in format that follows the current fedora-distgits.yaml
+
+    Default yaml.dump() generates this:
+
+    source-repositories:
+    - rpms/3dprinter-udev-rules:
+        default-branch: main
+        zuul/include: []
+
+    We want this:
+
+    source-repositories:
+      - rpms/3dprinter-udev-rules:
+          default-branch: main
+          zuul/include: []
+    """
+    def increase_indent(self, flow=False, indentless=False):
+        return super().increase_indent(flow, False)
+
+
 def find_packages_by_maintainers(queried_maintainers):
     all_maintainers = requests.get(
         "https://src.fedoraproject.org/extras/pagure_bz.json"
@@ -95,7 +116,11 @@ def create_new_zuul_config(zuul_config, common_package_set):
     zuul_config['resources']['projects']['Fedora-Distgits']['source-repositories'] = new_zuul_pkgs
 
     with open('new_zuul_config.yaml', 'w') as new_config_file:
-        new_config_file.write(yaml.dump(zuul_config))
+        new_config_file.write(
+            yaml.dump(
+                zuul_config, Dumper=CustomDumper, default_flow_style=False, indent=2
+            )
+        )
 
 def generate_zuul_config(packages_by_owners):
     zuul_config = get_zuul_config()
