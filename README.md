@@ -21,14 +21,7 @@ The file lives here: https://pagure.io/fedora-project-config/blob/master/f/resou
 
 To commit to fedora-project-config edit the generated file to match the formatting of the actual config.
 
-I do this: open `fedora-distgits.yaml` in another tab of my editor and:
-- fix indentation of the rpms
-- fix ordering of the dictionary entries
-- fix `rpms/systemd` - remove `:` and:
-```
-         zuul/include: []
-         default-branch: main
-```
+I do this: open `fedora-distgits.yaml` in another tab of my editor and fix the ordering of the dictionary entries.
 
 Then I run `meld` on the two files and eyball whether they visually match - only the new entries should be in the diff
 
