@@ -115,7 +115,7 @@ def create_new_zuul_config(zuul_config, common_package_set):
 
     zuul_config['resources']['projects']['Fedora-Distgits']['source-repositories'] = new_zuul_pkgs
 
-    with open('new_zuul_config.yaml', 'w') as new_config_file:
+    with open('fedora-distgits.yaml', 'w') as new_config_file:
         new_config_file.write(
             yaml.dump(
                 zuul_config, Dumper=CustomDumper, default_flow_style=False, indent=2

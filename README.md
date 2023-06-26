@@ -13,18 +13,15 @@ $ python -m pip install -r requirements.txt
 $ python generate_new_zuul_config.py 'ksurma,@python-packagers-sig'
 ```
 
-3. Explore the generated file `new_zuul_config.yaml`. If there're no packages to add to the config, no new file will be created.
+3. Explore the generated file `fedora-distgits.yaml`. If there're no packages to add to the config, no new file will be created.
 
 ## Adding to fedora-project-config
 
 The file lives here: https://pagure.io/fedora-project-config/blob/master/f/resources/fedora-distgits.yaml
 
-To commit to fedora-project-config edit the generated file to match the formatting of the actual config.
-
-I do this: open `fedora-distgits.yaml` in another tab of my editor and fix the ordering of the dictionary entries.
-
-Then I run `meld` on the two files and eyball whether they visually match - only the new entries should be in the diff
-
+Get a local copy of that repository.
+Replace `resources/fedora-distgits.yaml` with the created file.
+Check the diff for correctness and send a Pull Request to `fedora-project-config`.
 
 ## Attribution
 
