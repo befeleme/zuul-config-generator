@@ -25,4 +25,6 @@ Check the diff for correctness and send a Pull Request to `fedora-project-config
 
 ## Attribution
 
+The project is licensed under MIT license.
+
 `return_if_retired` is derived from https://pagure.io/fedora-misc-package-utilities/blob/master/f/find-orphaned-packages by @hroncok
