@@ -2,7 +2,6 @@ import argparse
 import asyncio
 
 import aiohttp
-import requests
 import yaml
 
 
@@ -27,10 +26,12 @@ class CustomDumper(yaml.Dumper):
         return super().increase_indent(flow, False)
 
 
-def find_packages_by_maintainers(queried_maintainers):
-    all_maintainers = requests.get(
-        "https://src.fedoraproject.org/extras/pagure_bz.json"
-    ).json()
+async def find_packages_by_maintainers(queried_maintainers):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            'https://src.fedoraproject.org/extras/pagure_bz.json'
+        ) as response:
+            all_maintainers = await response.json()
 
     return {
         pkgname
@@ -59,7 +60,7 @@ async def return_if_retired(pkg, semaphore, sleep=1):
 
 
 async def get_active_packages(maintainers):
-    packages_by_maintainers = find_packages_by_maintainers(maintainers)
+    packages_by_maintainers = await find_packages_by_maintainers(maintainers)
     
     # Check which of the above set are retired
     tasks = []
@@ -73,9 +74,11 @@ async def get_active_packages(maintainers):
     return packages_by_maintainers - retired_pkgs
 
 
-def get_zuul_config():
-    resp = requests.get('https://pagure.io/fedora-project-config/raw/master/f/resources/fedora-distgits.yaml')
-    return yaml.safe_load(resp.text)
+async def get_zuul_config():
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://pagure.io/fedora-project-config/raw/master/f/resources/fedora-distgits.yaml') as response:
+            config = await response.text()
+    return yaml.safe_load(config)
 
 
 def list_packages_in_zuul(zuul_config):
@@ -122,8 +125,8 @@ def create_new_zuul_config(zuul_config, common_package_set):
             )
         )
 
-def generate_zuul_config(packages_by_owners):
-    zuul_config = get_zuul_config()
+async def generate_zuul_config(packages_by_owners):
+    zuul_config = await get_zuul_config()
     all_pkgs_in_zuul = list_packages_in_zuul(zuul_config)
     common_pkg_set = create_common_package_set(packages_by_owners, all_pkgs_in_zuul)
     if common_pkg_set:
@@ -134,7 +137,7 @@ def generate_zuul_config(packages_by_owners):
 
 async def main(maintainers):
     active_packages_by_owners = await get_active_packages(maintainers)
-    generate_zuul_config(active_packages_by_owners)
+    await generate_zuul_config(active_packages_by_owners)
 
 
 if __name__ == '__main__':
