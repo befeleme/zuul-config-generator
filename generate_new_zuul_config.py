@@ -135,19 +135,27 @@ async def generate_zuul_config(packages_by_owners):
         print("No new packages to add - no config generated")
 
 
-async def main(maintainers):
-    active_packages_by_owners = await get_active_packages(maintainers)
-    await generate_zuul_config(active_packages_by_owners)
-
-
-if __name__ == '__main__':
+def parse_cli():
     parser = argparse.ArgumentParser(
-        description='Provide a comma-separated list of FAS maintainers/groups to bulk add to zuul.'
+    description='Provide a comma-separated list of FAS maintainers/groups to bulk add to zuul.'
     )
     parser.add_argument('maintainers', type=str, nargs='+',
                         help='a comma-separated list of FAS maintainers')
 
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+async def main():
+    args = parse_cli()
     maintainers = [maintainer.strip() for maintainer in args.maintainers[0].split(',')]
 
-    asyncio.run(main(maintainers))
+    active_packages_by_owners = await get_active_packages(maintainers)
+    await generate_zuul_config(active_packages_by_owners)
+
+
+def run():
+    asyncio.run(main())
+
+
+if __name__ == '__main__':
+    run()
