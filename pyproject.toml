@@ -13,4 +13,4 @@ dependencies = [
 readme = "README.md"
 
 [project.scripts]
-generate-zuul-config = "generate_new_zuul_config:run"
+generate-fedora-distgits-yaml = "generate_fedora_distgits_yaml:run"
